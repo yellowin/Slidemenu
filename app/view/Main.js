@@ -1,50 +1,88 @@
 Ext.define('myapp.view.Main', {
-    extend: 'Ext.tab.Panel',
-    xtype: 'main',
-    requires: [
-        'Ext.TitleBar',
-        'Ext.Video'
-    ],
-    config: {
-        tabBarPosition: 'bottom',
+    extend: 'Ext.Container',
+    requires: ['myapp.view.ActionSheet'],
+    id:'main_frames',
 
+    config: {
+        padding: 20,
+        scrollable: true,
+        defaults: {
+            xtype : 'button',
+            cls   : 'demobtn',
+            margin: '10 0'
+        },
         items: [
             {
-                title: 'Welcome',
-                iconCls: 'home',
+                xtype: 'component',
+                //styleHtmlContent: true,
+                html: '<b>Ext.Menu</b> is a new component in Sencha Touch 2.3 which allows you to easily display sliding \
+                menus from any side of the screen.<br /><br />You can show the menus by either tapping the buttons below, \
+                or by swiping from the edge of the screen.'
+            }, {
+                text: 'Action Sheet',
+                model: false,
+                handler: function() {
 
-                styleHtmlContent: true,
-                scrollable: true,
 
-                items: {
-                    docked: 'top',
-                    xtype: 'titlebar',
-                    title: 'Welcome to Sencha Touch 2'
-                },
-
-                html: [
-                    "You've just generated a new Sencha Touch 2 project. What you're looking at right now is the ",
-                    "contents of <a target='_blank' href=\"app/view/Main.js\">app/view/Main.js</a> - edit that file ",
-                    "and refresh to change what's rendered here."
-                ].join("")
-            },
-            {
-                title: 'Get Started',
-                iconCls: 'action',
-
-                items: [
-                    {
-                        docked: 'top',
-                        xtype: 'titlebar',
-                        title: 'Getting Started'
-                    },
-                    {
-                        xtype: 'video',
-                        url: 'http://av.vimeo.com/64284/137/87347327.mp4?token=1330978144_f9b698fea38cd408d52a2393240c896c',
-                        posterUrl: 'http://b.vimeocdn.com/ts/261/062/261062119_640.jpg'
+                    //메뉴를 여는 경우라면
+                    if(myapp.app.slide_flag == 0){
+                        Ext.getCmp('actionsheet_myapp').draggableBehavior.draggable.setOffset(0, 0, {duration: 210});
+                        myapp.app.slide_flag = 1;
+                    }else { //메뉴를 닫는 경우라면
+                        Ext.getCmp('actionsheet_myapp').draggableBehavior.draggable.setOffset(-250, 0, {duration: 210});
+                        myapp.app.slide_flag = 0;
                     }
-                ]
+
+                }
             }
         ]
+    },
+
+    initialize:function(){
+        var items_menu = {
+
+            id: 'top_pnl',
+            xtype:'container',
+            //xtype: 'crosscut',
+            //style:'background:#fff; border-top-left-radius:35px;',
+            //style: 'background:rgba(0,0,0,0) !important; border-top-left-radius:35px;',
+            style:'height:100%;right:-10px;position:absolute;width:100%;padding-right:20px',
+            height: '100%',
+            layout: {
+                type: 'vbox'
+                //pack: 'middle'
+
+            },
+            default: 'button',
+            directionLock: true,
+            scrollable: true,
+            items: [
+
+                {
+                    xtype: 'button',
+                    text: 'Close Menu',
+                    scope: this,
+                    handler: function () {
+                        console.log(this);
+                        //this.actions.hide();
+                        Ext.getCmp('actionsheet_myapp').draggableBehavior.draggable.setOffset(-250, 0, {duration: 210});
+                        myapp.app.slide_flag = 0;
+                        //Ext.getCmp('actionsheet_myapp').hide();
+                    }
+                }
+            ]
+
+        };
+
+        if (!this.actions) {
+            this.actions = Ext.create('myapp.view.ActionSheet', {
+                items: items_menu
+            });
+        }
+
+        Ext.Viewport.add(this.actions);
+        this.actions.show();
     }
+
+
 });

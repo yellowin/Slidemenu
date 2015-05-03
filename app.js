@@ -13,6 +13,8 @@
 Ext.application({
     name: 'myapp',
 
+    slide_flag: 0,
+
     requires: [
         'Ext.MessageBox'
     ],
